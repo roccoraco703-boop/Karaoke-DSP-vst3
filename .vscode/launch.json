@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug KaraokeDSP",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Build/KaraokeDSP",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                { "text": "-enable-pretty-printing" }
+            ]
+        }
+    ]
+}

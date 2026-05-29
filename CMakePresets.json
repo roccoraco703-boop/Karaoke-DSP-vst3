@@ -1,0 +1,35 @@
+{
+  "version": 3,
+    "cmakeMinimumRequired": { "major": 3, "minor": 19, "patch": 0 },
+    "configurePresets": [
+      {
+        "name": "win-msvc-release",
+        "description": "Configure for Visual Studio 2022 x64 Release",
+        "generator": "Visual Studio 17 2022",
+        "architecture": "x64",
+        "binaryDir": "${sourceDir}/Build/win-msvc-release",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      },
+      {
+        "name": "linux-release",
+        "description": "Configure for Linux (Unix Makefiles) Release",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/Build/linux-release",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      }
+    ],
+    "buildPresets": [
+      {
+        "name": "win-msvc-release",
+        "configurePreset": "win-msvc-release"
+      },
+      {
+        "name": "linux-release",
+        "configurePreset": "linux-release"
+      }
+    ]
+}

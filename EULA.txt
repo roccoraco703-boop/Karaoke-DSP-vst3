@@ -1,0 +1,5 @@
+Karaoke DSP End-User License Agreement (EULA)
+
+Insert your license text here. This is a placeholder EULA used by the NSIS installer.
+
+By installing this software you agree to the terms and conditions contained in this document.

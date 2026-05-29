@@ -1,0 +1,18 @@
+# Build artifacts
+Build/
+artifacts/
+*.o
+*.obj
+*.so
+*.dll
+*.lib
+*.a
+*.exe
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.user
+*.suo
+.vscode/
+*.log
+.DS_Store

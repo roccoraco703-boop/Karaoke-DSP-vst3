@@ -1,0 +1,18 @@
+cat > cmake-fix.diff <<'PATCH'
+*** Begin Patch
+*** Update File: CMakeLists.txt
+@@
+  set(JUCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/JUCE")
++set(JUCE_VST3_CAN_REPLACE_VST2 OFF CACHE BOOL "Disable VST3-to-VST2 replacement to avoid parameter ID conflicts" FORCE)
++set(JUCE_FORCE_USE_LEGACY_PARAM_IDS ON CACHE BOOL "Keep legacy parameter IDs for VST compatibility" FORCE)
+  add_subdirectory(${JUCE_DIR})
+*** End Patch
+PATCH
+
+# Applicare la patch
+git apply cmake-fix.diff || patch -p0 < cmake-fix.diff
+
+# Rigenera e ricostruisci
+rm -rf Build
+cmake -S . -B Build
+cmake --build Build -- -j$(nproc)

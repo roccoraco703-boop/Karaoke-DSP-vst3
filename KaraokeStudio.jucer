@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT
+    id="KaraokeStudioProject"
+    name="KaraokeStudio"
+    projectType="guiapp"
+    version="1.0.0"
+    bundleIdentifier="com.rocco.karaokestudio"
+    includeBinaryInAppConfig="1"
+    jucerFormatVersion="1">
+
+    <MAINGROUP id="MainGroup" name="KaraokeStudio">
+
+        <GROUP id="SourceGroup" name="Source">
+            <FILE id="MainCpp" name="Main.cpp" file="Source/Main.cpp" compile="1" resource="0"/>
+            <FILE id="MainComponentH" name="MainComponent.h" file="Source/MainComponent.h" compile="0" resource="0"/>
+            <FILE id="MainComponentCpp" name="MainComponent.cpp" file="Source/MainComponent.cpp" compile="1" resource="0"/>
+
+            <GROUP id="DSPGroup" name="DSP">
+                <FILE name="PitchShifter.h" file="Source/DSP/PitchShifter.h" compile="0" resource="0"/>
+                <FILE name="PitchShifter.cpp" file="Source/DSP/PitchShifter.cpp" compile="1" resource="0"/>
+                <FILE name="Delay.h" file="Source/DSP/Delay.h" compile="0" resource="0"/>
+                <FILE name="Delay.cpp" file="Source/DSP/Delay.cpp" compile="1" resource="0"/>
+                <FILE name="Reverb.h" file="Source/DSP/Reverb.h" compile="0" resource="0"/>
+                <FILE name="Reverb.cpp" file="Source/DSP/Reverb.cpp" compile="1" resource="0"/>
+                <FILE name="PitchDetection.h" file="Source/DSP/PitchDetection.h" compile="0" resource="0"/>
+                <FILE name="PitchDetection.cpp" file="Source/DSP/PitchDetection.cpp" compile="1" resource="0"/>
+                <FILE name="Mixer.h" file="Source/DSP/Mixer.h" compile="0" resource="0"/>
+                <FILE name="Mixer.cpp" file="Source/DSP/Mixer.cpp" compile="1" resource="0"/>
+            </GROUP>
+
+            <GROUP id="UIGroup" name="UI">
+                <FILE name="MixerChannelComponent.h" file="Source/UI/MixerChannelComponent.h" compile="0" resource="0"/>
+                <FILE name="MixerChannelComponent.cpp" file="Source/UI/MixerChannelComponent.cpp" compile="1" resource="0"/>
+                <FILE name="Knob.h" file="Source/UI/Knob.h" compile="0" resource="0"/>
+                <FILE name="Knob.cpp" file="Source/UI/Knob.cpp" compile="1" resource="0"/>
+                <FILE name="VuMeter.h" file="Source/UI/VuMeter.h" compile="0" resource="0"/>
+                <FILE name="VuMeter.cpp" file="Source/UI/VuMeter.cpp" compile="1" resource="0"/>
+                <FILE name="TunerComponent.h" file="Source/UI/TunerComponent.h" compile="0" resource="0"/>
+                <FILE name="TunerComponent.cpp" file="Source/UI/TunerComponent.cpp" compile="1" resource="0"/>
+            </GROUP>
+
+        </GROUP>
+
+        <GROUP id="ResourcesGroup" name="Resources">
+        </GROUP>
+
+    </MAINGROUP>
+
+    <EXPORTFORMATS>
+
+        <VS2022 targetFolder="Builds/VisualStudio2022">
+            <CONFIGURATION name="Debug" isDebug="1" optimisation="0"/>
+            <CONFIGURATION name="Release" isDebug="0" optimisation="3"/>
+        </VS2022>
+
+        <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+            <CONFIGURATION name="Debug" isDebug="1" optimisation="0"/>
+            <CONFIGURATION name="Release" isDebug="0" optimisation="3"/>
+        </LINUX_MAKE>
+
+    </EXPORTFORMATS>
+
+</JUCERPROJECT>

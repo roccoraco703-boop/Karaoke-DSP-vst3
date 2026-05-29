@@ -1,0 +1,33 @@
+name: Build (Windows)
+
+on:
+  push: {}
+  pull_request: {}
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup CMake
+        uses: lukka/get-cmake@v3
+        with:
+          cmake-version: '3.24.0'
+      - name: Configure (MSVC)
+        run: cmake --preset win-msvc-release
+      - name: Build
+        run: cmake --build --preset win-msvc-release --config Release
+      - name: Package artifacts
+        run: powershell -ExecutionPolicy Bypass -File .\package_windows.ps1
+      - name: Install NSIS
+        run: choco install nsis -y
+      - name: Build NSIS installer
+        run: powershell -ExecutionPolicy Bypass -File .\package_nsis.ps1
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: KaraokeDSP-windows
+          path: |
+            artifacts/KaraokeDSP-win.zip
+            artifacts/KaraokeDSP-Setup.exe
