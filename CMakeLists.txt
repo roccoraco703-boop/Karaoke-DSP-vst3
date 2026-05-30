@@ -17,10 +17,6 @@ add_subdirectory(${JUCE_DIR})
 set(SRC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/Source")
 
 set(SHARED_SOURCES
-    ${SRC_ROOT}/Main.cpp
-    ${SRC_ROOT}/PluginProcessor.cpp
-    ${SRC_ROOT}/PluginProcessor.h
-
     # UI
     ${SRC_ROOT}/UI/MainComponent.cpp
     ${SRC_ROOT}/UI/MainComponent.h
@@ -63,7 +59,10 @@ target_compile_definitions(KaraokeDSPApp PRIVATE
     JUCE_USE_CURL=0
 )
 
-target_sources(KaraokeDSPApp PRIVATE ${SHARED_SOURCES})
+target_sources(KaraokeDSPApp PRIVATE
+    ${SRC_ROOT}/Main.cpp
+    ${SHARED_SOURCES}
+)
 
 target_link_libraries(KaraokeDSPApp PRIVATE
     juce::juce_core
@@ -105,7 +104,11 @@ target_compile_definitions(KaraokeDSP_VST3 PRIVATE
     JUCE_PLUGINHOST_VST3=1
 )
 
-target_sources(KaraokeDSP_VST3 PRIVATE ${SHARED_SOURCES})
+target_sources(KaraokeDSP_VST3 PRIVATE
+    ${SRC_ROOT}/PluginProcessor.cpp
+    ${SRC_ROOT}/PluginProcessor.h
+    ${SHARED_SOURCES}
+)
 
 # Ensure the format-specific wrapper target gets the plugin filter symbol
 target_sources(KaraokeDSP_VST3_VST3 PRIVATE ${SRC_ROOT}/PluginProcessor.cpp)
