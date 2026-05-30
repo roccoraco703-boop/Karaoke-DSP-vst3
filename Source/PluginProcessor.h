@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "DSP/DSPChain.h"
 
 class KaraokeDSPAudioProcessor : public juce::AudioProcessor
 {
@@ -20,7 +21,7 @@ public:
     const juce::String getProgramName (int) override { return {}; }
     void changeProgramName (int, const juce::String&) override {}
 
-    void prepareToPlay (double, int) override {}
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override {}
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -51,5 +52,7 @@ public:
     void setStateInformation (const void*, int) override {}
 
 private:
+    DSPChain dspChain;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (KaraokeDSPAudioProcessor)
 };

@@ -1,11 +1,14 @@
 #pragma once
+#include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "AnalogVuMeter.h"
+#include "DigitalDisplay.h"
+#include "EqualizerSection.h"
+#include "ChannelStrip.h"
 #include "../DSP/DSPChain.h"
-#include "Knob.h"
-#include "VuMeter.h"
 
-class MainComponent : public juce::Component,
+class MainComponent : public juce::AudioAppComponent,
                       public juce::Timer
 {
 public:
@@ -14,17 +17,52 @@ public:
 
     void paint(juce::Graphics&) override;
     void resized() override;
-
     void timerCallback() override;
 
+    // AudioAppComponent callbacks
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+    void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
+    void releaseResources() override;
+
 private:
-    DSPChain dsp;
+    // Titolo
+    juce::Label titleLabel;
+    juce::Label statusLabel;
+    juce::TextButton bypassButton;
+    juce::TextButton monitorButton;
 
-    Knob pitchKnob{"Pitch"};
-    Knob delayKnob{"Delay"};
-    Knob reverbKnob{"Reverb"};
+    // VU meters vintage
+    AnalogVuMeter vuLeft;
+    AnalogVuMeter vuRight;
 
-    VuMeter vu;
+    // Display digitali Delay / Reverb
+    DigitalDisplay delayDisplay{"DELAY"};
+    DigitalDisplay reverbDisplay{"REVERB"};
+
+    // EQ
+    EqualizerSection eqSection;
+
+    // Mixer channels
+    ChannelStrip ch1{"VOCAL"};
+    ChannelStrip ch2{"BACKING"};
+    ChannelStrip ch3{"MASTER"};
+
+    // DSP
+    DSPChain dspChain;
+
+    // Livelli audio reali
+    std::atomic<float> outLeftLevel{ 0.0f };
+    std::atomic<float> outRightLevel{ 0.0f };
+    std::atomic<float> voiceLevel{ 0.0f };
+    std::atomic<float> baseLevel{ 0.0f };
+
+    // Dispositivo audio
+    juce::String savedInputDevice;
+
+    void connectUI();
+    juce::String findMonitorDevice();
+    void startAudio();
+    void stopAudio();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

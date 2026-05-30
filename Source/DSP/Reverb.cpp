@@ -17,6 +17,7 @@ ReverbEffect::~ReverbEffect()
 void ReverbEffect::prepare(double sampleRate, int samplesPerBlock)
 {
     sr = sampleRate;
+    temp.setSize(2, samplesPerBlock);
     reverb.setParameters(params);
 }
 
@@ -29,8 +30,6 @@ void ReverbEffect::setWetLevel(float amount01)
 
 void ReverbEffect::processBlock(float* input, float* outL, float* outR, int numSamples)
 {
-    juce::AudioBuffer<float> temp(2, numSamples);
-
     auto* L = temp.getWritePointer(0);
     auto* R = temp.getWritePointer(1);
 

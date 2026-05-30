@@ -24,10 +24,19 @@ set(SHARED_SOURCES
     ${SRC_ROOT}/UI/Knob.h
     ${SRC_ROOT}/UI/VuMeter.cpp
     ${SRC_ROOT}/UI/VuMeter.h
+    ${SRC_ROOT}/UI/AnalogVuMeter.cpp
+    ${SRC_ROOT}/UI/AnalogVuMeter.h
+    ${SRC_ROOT}/UI/DigitalDisplay.cpp
+    ${SRC_ROOT}/UI/DigitalDisplay.h
+    ${SRC_ROOT}/UI/EqualizerSection.cpp
+    ${SRC_ROOT}/UI/EqualizerSection.h
+    ${SRC_ROOT}/UI/ChannelStrip.cpp
+    ${SRC_ROOT}/UI/ChannelStrip.h
     ${SRC_ROOT}/UI/TunerComponent.cpp
     ${SRC_ROOT}/UI/TunerComponent.h
     ${SRC_ROOT}/UI/MixerChannelComponent.cpp
     ${SRC_ROOT}/UI/MixerChannelComponent.h
+    ${SRC_ROOT}/UI/LookAndFeelStudio.h
 
     # DSP
     ${SRC_ROOT}/DSP/DSPChain.cpp
@@ -110,8 +119,7 @@ target_sources(KaraokeDSP_VST3 PRIVATE
     ${SHARED_SOURCES}
 )
 
-# Ensure the format-specific wrapper target gets the plugin filter symbol
-target_sources(KaraokeDSP_VST3_VST3 PRIVATE ${SRC_ROOT}/PluginProcessor.cpp)
+# VST3 wrapper already links to the main target; no extra sources needed
 
 target_link_libraries(KaraokeDSP_VST3 PRIVATE
     juce::juce_core

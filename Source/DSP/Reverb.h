@@ -22,4 +22,5 @@ private:
 
     juce::Reverb reverb;
     juce::Reverb::Parameters params;
+    juce::AudioBuffer<float> temp;
 };
