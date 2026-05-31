@@ -1,7 +1,10 @@
 #include "MainComponent.h"
+#include <iostream>
 
 MainComponent::MainComponent()
 {
+    setAudioChannels(2, 2);
+
     // Titolo neon
     titleLabel.setText("KaraokeDSP", juce::dontSendNotification);
     titleLabel.setFont(juce::Font(juce::FontOptions(juce::Font::getDefaultSansSerifFontName(), 28.0f, juce::Font::bold)));
@@ -23,10 +26,22 @@ MainComponent::MainComponent()
     monitorButton.setButtonText("MONITOR");
     monitorButton.setClickingTogglesState(true);
     monitorButton.onClick = [this] {
-        stopAudio();
+        if (inputSelector.getNumItems() == 0)
+            refreshInputDevices();
         startAudio();
     };
     addAndMakeVisible(monitorButton);
+
+    inputLabel.setText("Input:", juce::dontSendNotification);
+    inputLabel.setFont(juce::Font(juce::FontOptions(juce::Font::getDefaultSansSerifFontName(), 11.0f, juce::Font::plain)));
+    inputLabel.setColour(juce::Label::textColourId, juce::Colour(0xFFAAAAAA));
+    addAndMakeVisible(inputLabel);
+
+    inputSelector.onChange = [this] {
+        if (inputSelector.getSelectedId() > 0)
+            startAudio();
+    };
+    addAndMakeVisible(inputSelector);
 
     addAndMakeVisible(vuLeft);
     addAndMakeVisible(vuRight);
@@ -44,20 +59,21 @@ MainComponent::MainComponent()
 
     setSize(900, 650);
 
-    // Salva il dispositivo di input corrente e avvia audio
+    // Salva il dispositivo di input corrente
     {
         juce::AudioDeviceManager::AudioDeviceSetup setup;
         deviceManager.getAudioDeviceSetup(setup);
         savedInputDevice = setup.inputDeviceName;
     }
-    startAudio();
+
+    refreshInputDevices();
 
     startTimerHz(30);
 }
 
 MainComponent::~MainComponent()
 {
-    stopAudio();
+    shutdownAudio();
 }
 
 void MainComponent::connectUI()
@@ -151,6 +167,8 @@ void MainComponent::resized()
     titleLabel.setBounds(header.removeFromLeft(200));
     bypassButton.setBounds(header.removeFromLeft(70));
     monitorButton.setBounds(header.removeFromLeft(70));
+    inputLabel.setBounds(header.removeFromLeft(40));
+    inputSelector.setBounds(header.removeFromLeft(180));
     statusLabel.setBounds(header.removeFromRight(100));
     area.removeFromTop(10);
 
@@ -254,35 +272,64 @@ void MainComponent::startAudio()
 
     if (monitorButton.getToggleState())
     {
-        auto monitorName = findMonitorDevice();
-        if (monitorName.isNotEmpty())
-            setup.inputDeviceName = monitorName;
+        // Usa il dispositivo selezionato nel ComboBox
+        auto selected = inputSelector.getText();
+        if (selected.isNotEmpty())
+        {
+            setup.inputDeviceName = selected;
+            std::cout << "Switching to selected device: " << selected.toStdString() << std::endl;
+        }
+        else
+        {
+            statusLabel.setText("Select Input", juce::dontSendNotification);
+            return;
+        }
     }
     else
     {
         setup.inputDeviceName = savedInputDevice;
+        std::cout << "Switching to default input: " << savedInputDevice.toStdString() << std::endl;
     }
 
-    deviceManager.initialise(2, 2, nullptr, true, {}, &setup);
-    deviceManager.addAudioCallback(reinterpret_cast<juce::AudioIODeviceCallback*>(this));
+    auto err = deviceManager.setAudioDeviceSetup(setup, true);
+    if (err.isNotEmpty())
+    {
+        std::cout << "Audio device error: " << err.toStdString() << std::endl;
+        statusLabel.setText("Audio Error", juce::dontSendNotification);
+    }
+    else
+    {
+        statusLabel.setText("OK", juce::dontSendNotification);
+    }
 }
 
 void MainComponent::stopAudio()
 {
-    deviceManager.removeAudioCallback(reinterpret_cast<juce::AudioIODeviceCallback*>(this));
-    deviceManager.closeAudioDevice();
 }
 
-juce::String MainComponent::findMonitorDevice()
+void MainComponent::refreshInputDevices()
 {
+    inputSelector.clear();
+    int id = 1;
     for (auto* deviceType : deviceManager.getAvailableDeviceTypes())
     {
         auto names = deviceType->getDeviceNames(true);
         for (const auto& name : names)
         {
-            if (name.containsIgnoreCase("Monitor"))
-                return name;
+            // Escludi dispositivi noti non funzionanti con ALSA
+            if (name.containsIgnoreCase("Default ALSA Output"))
+                continue;
+            inputSelector.addItem(name, id++);
         }
     }
-    return {};
+
+    // Seleziona il dispositivo salvato se presente
+    for (int i = 0; i < inputSelector.getNumItems(); ++i)
+    {
+        if (inputSelector.getItemText(i) == savedInputDevice)
+        {
+            inputSelector.setSelectedItemIndex(i);
+            break;
+        }
+    }
 }

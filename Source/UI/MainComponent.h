@@ -58,11 +58,13 @@ private:
 
     // Dispositivo audio
     juce::String savedInputDevice;
+    juce::ComboBox inputSelector;
+    juce::Label inputLabel;
 
     void connectUI();
-    juce::String findMonitorDevice();
     void startAudio();
     void stopAudio();
+    void refreshInputDevices();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
