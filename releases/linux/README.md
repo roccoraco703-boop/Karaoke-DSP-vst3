@@ -27,7 +27,7 @@ Applicazione standalone e plugin VST3 per elaborazione audio vocale in tempo rea
 
 ## Requisiti minimi
 
-- **OS:** Linux 64-bit (Fedora 38+, Ubuntu 22.04+, Arch)
+- **OS:** Linux 64-bit — Testato su: Fedora 40+, Ubuntu 22.04+, Debian 12+, Arch Linux, openSUSE Tumbleweed, Pop!_OS 22.04+
 - **CPU:** x86_64 con supporto SSE2
 - **RAM:** 4 GB consigliati
 - **Audio:** PipeWire o PulseAudio

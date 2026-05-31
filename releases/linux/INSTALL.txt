@@ -33,6 +33,15 @@ MANUAL INSTALL
        mkdir -p ~/.vst3
        cp -r "Build/VST3/VST3/Karaoke DSP.vst3" ~/.vst3/
 
+REQUIREMENTS
+------------
+  OS:     Linux 64-bit
+          Tested on: Fedora 40+, Ubuntu 22.04+, Debian 12+,
+                     Arch Linux, openSUSE Tumbleweed, Pop!_OS 22.04+
+  CPU:    x86_64 with SSE2
+  RAM:    4 GB recommended
+  Audio:  PipeWire or PulseAudio
+
 LAUNCH
 ------
   Standalone app:
