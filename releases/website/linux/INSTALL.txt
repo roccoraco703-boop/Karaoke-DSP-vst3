@@ -1,0 +1,76 @@
+================================================================================
+  KARAOKE DSP — LINUX INSTALLATION GUIDE
+================================================================================
+
+QUICK INSTALL (Automatic)
+-------------------------
+  1. Open a terminal in the KaraokeDSP repository folder
+  2. Run:
+       bash releases/linux/install.sh
+  3. The script compiles and installs the application + VST3 plugin
+
+MANUAL INSTALL
+--------------
+  1. Install dependencies:
+
+     Fedora:
+       sudo dnf install cmake gcc-c++ pkgconfig alsa-lib-devel pulseaudio-libs-devel
+
+     Ubuntu/Debian:
+       sudo apt install cmake build-essential libasound2-dev libpulse-dev
+
+     Arch:
+       sudo pacman -S cmake base-devel alsa-lib libpulse
+
+  2. Build:
+       mkdir Build && cd Build
+       cmake .. -DCMAKE_BUILD_TYPE=Release
+       cmake --build . --target KaraokeDSPApp --target KaraokeDSP_VST3 -j$(nproc)
+
+  3. Install:
+       cp "Build/Karaoke DSP Console" ~/.local/bin/karaoke-dsp
+       chmod +x ~/.local/bin/karaoke-dsp
+       mkdir -p ~/.vst3
+       cp -r "Build/VST3/VST3/Karaoke DSP.vst3" ~/.vst3/
+
+REQUIREMENTS
+------------
+  OS:     Linux 64-bit
+          Tested on: Fedora 40+, Ubuntu 22.04+, Debian 12+,
+                     Arch Linux, openSUSE Tumbleweed, Pop!_OS 22.04+
+  CPU:    x86_64 with SSE2
+  RAM:    4 GB recommended
+  Audio:  PipeWire or PulseAudio
+
+LAUNCH
+------
+  Standalone app:
+    karaoke-dsp
+
+  VST3 plugin:
+    Load in any DAW (Ardour, Reaper, Bitwig, Carla, etc.)
+
+IMPORTANT NOTE
+----------------
+  The standalone app only captures the MICROPHONE (hardware input).
+  To process SYSTEM AUDIO (YouTube, browser, Bluetooth), use the
+  VST3 plugin inside Carla or route audio with helvum.
+
+SYSTEM AUDIO ROUTING (YouTube, Browser, Bluetooth)
+--------------------------------------------------
+  Use Carla or helvum to route Firefox/YouTube/Bluetooth audio
+  into the Karaoke DSP plugin.
+
+  Carla (recommended):   sudo dnf install carla
+  Helvum:                sudo dnf install helvum
+
+UNINSTALL
+---------
+  rm ~/.local/bin/karaoke-dsp
+  rm -rf ~/.vst3/Karaoke\ DSP.vst3
+  rm ~/.local/share/applications/karaoke-dsp.desktop
+
+================================================================================
+  GitHub: https://github.com/roccoraco703-boop/Karaoke-DSP-vst3
+  Version 1.0.0 | Linux x86_64
+================================================================================
