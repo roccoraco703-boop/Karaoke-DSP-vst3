@@ -1,0 +1,69 @@
+================================================================================
+  KARAOKE DSP — WINDOWS INSTALLATION GUIDE
+================================================================================
+
+QUICK INSTALL (Recommended)
+---------------------------
+  Run the installer:  KaraokeDSP-Setup.exe
+  Follow the on-screen instructions.
+
+POWERSHELL INSTALL
+------------------
+  1. Open PowerShell as Administrator
+  2. Navigate to this folder
+  3. Run:
+       powershell -ExecutionPolicy Bypass -File install.ps1
+
+MANUAL INSTALL
+--------------
+  1. Copy "Karaoke DSP Console.exe" to your preferred folder
+  2. Copy "Karaoke DSP.vst3" folder to:
+       %LOCALAPPDATA%\VST3\
+     (e.g. C:\Users\YOUR_NAME\AppData\Local\VST3\)
+  3. Create a Desktop shortcut if desired
+
+REQUIREMENTS
+------------
+  OS:     Windows 10 / 11 (64-bit)
+  CPU:    x86_64 with SSE2
+  RAM:    4 GB recommended
+  Audio:  WASAPI or ASIO (ASIO recommended for low latency)
+
+DAW COMPATIBILITY
+-----------------
+  The VST3 plugin works with all major DAWs:
+    - FL Studio
+    - Ableton Live
+    - Reaper
+    - Cubase
+    - Studio One
+    - Bitwig Studio
+    - Cakewalk
+
+SYSTEM AUDIO ROUTING (YouTube, Browser)
+-----------------------------------------
+  To capture system audio (YouTube, Spotify, Browser):
+
+  Option 1 — VB-Cable (Free):
+    1. Install VB-Cable from https://vb-audio.com/Cable/
+    2. Set Windows default playback to "CABLE Input"
+    3. In your DAW, select "CABLE Output" as track input
+    4. Load Karaoke DSP on the track
+
+  Option 2 — VoiceMeeter Banana (Free):
+    1. Install from https://vb-audio.com/Voicemeeter/
+    2. Route system audio through VoiceMeeter virtual channels
+    3. Send virtual output to your DAW / Karaoke DSP
+
+UNINSTALL
+---------
+  Settings > Apps > Karaoke DSP > Uninstall
+
+  Or manually delete:
+    %LOCALAPPDATA%\Programs\KaraokeDSP
+    %LOCALAPPDATA%\VST3\Karaoke DSP.vst3
+
+================================================================================
+  GitHub: https://github.com/roccoraco703-boop/Karaoke-DSP-vst3
+  Version 1.0.0 | Windows 10/11 x64
+================================================================================

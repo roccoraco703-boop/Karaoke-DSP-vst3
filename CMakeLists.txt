@@ -140,8 +140,8 @@ target_link_libraries(KaraokeDSP_VST3 PRIVATE
 # Linux
 # ==========================================================
 if(UNIX AND NOT APPLE)
-    target_compile_definitions(KaraokeDSPApp PRIVATE JUCE_ALSA=1 JUCE_JACK=1)
-    target_compile_definitions(KaraokeDSP_VST3 PRIVATE JUCE_ALSA=1 JUCE_JACK=1)
+    target_compile_definitions(KaraokeDSPApp PRIVATE JUCE_ALSA=1 JUCE_JACK=1 JUCE_PULSEAUDIO=1)
+    target_compile_definitions(KaraokeDSP_VST3 PRIVATE JUCE_ALSA=1 JUCE_JACK=1 JUCE_PULSEAUDIO=1)
 
     find_package(Threads REQUIRED)
 

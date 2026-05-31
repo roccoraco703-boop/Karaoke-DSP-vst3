@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karaoke DSP — Real-Time Vocal Processing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-elevated: #12121a;
+            --bg-card: #1a1a24;
+            --primary: #e94560;
+            --primary-hover: #ff6b81;
+            --accent: #0f3460;
+            --text: #e0e0e0;
+            --text-muted: #888;
+            --border: #2a2a3a;
+            --success: #4caf50;
+            --info: #2196f3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at 50% 0%, #1a1a2e 0%, var(--bg) 70%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e94560' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0 auto 2rem;
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.3);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Download Buttons */
+        .downloads {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .download-btn.primary {
+            background: linear-gradient(135deg, var(--primary), #c73e54);
+            color: white;
+            box-shadow: 0 8px 30px rgba(233, 69, 96, 0.3);
+        }
+
+        .download-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(233, 69, 96, 0.4);
+        }
+
+        .download-btn.secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .download-btn.secondary:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .download-btn .icon {
+            font-size: 1.5rem;
+        }
+
+        .download-btn .info {
+            text-align: left;
+            line-height: 1.3;
+        }
+
+        .download-btn .label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 4rem;
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Platforms Section */
+        .platforms {
+            background: var(--bg-elevated);
+            padding: 6rem 2rem;
+        }
+
+        .platforms-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .platform-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .platform-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .platform-card .os-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .platform-card .version {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-card .specs {
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            list-style: none;
+        }
+
+        .platform-card .specs li {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .platform-card .specs li:last-child {
+            border-bottom: none;
+        }
+
+        .platform-card .specs li::before {
+            content: '>';
+            color: var(--primary);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .platform-card .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .platform-card .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .platform-card .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .platform-card .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            margin-left: 0.5rem;
+        }
+
+        .platform-card .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        /* Screenshots / Preview */
+        .preview {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .preview-frame {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1rem;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-dots {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .preview-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .preview-dots span:nth-child(1) { background: #ff5f56; }
+        .preview-dots span:nth-child(2) { background: #ffbd2e; }
+        .preview-dots span:nth-child(3) { background: #27c93f; }
+
+        .preview-content {
+            padding-top: 2rem;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-placeholder {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .downloads {
+                flex-direction: column;
+                align-items: center;
+            }
+            .download-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            .platform-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo">K</div>
+            <div class="version-badge">Version 1.0.0 &mdash; Now Available</div>
+            <h1>Karaoke DSP</h1>
+            <p class="tagline">
+                Real-time vocal processing console. Pitch shifting, reverb, delay, EQ, and mixer — 
+                all in one sleek VST3 plugin and standalone application.
+            </p>
+            <div class="downloads">
+                <a href="../windows/KaraokeDSP-Setup.exe" class="download-btn primary">
+                    <span class="icon">&#x1F4E5;</span>
+                    <div class="info">
+                        <div class="label">Download for</div>
+                        <div>Windows 10/11</div>
+                    </div>
+                </a>
+                <a href="../linux/install.sh" class="download-btn secondary">
+                    <span class="icon">&#x1F427;</span>
+                    <div class="info">
+                        <div class="label">Download for</div>
+                        <div>Linux x86_64</div>
+                    </div>
+                </a>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Free &mdash; No registration required
+            </p>
+        </div>
+        <div class="scroll-indicator">&#x2193;</div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <h2 class="section-title">Professional DSP Effects</h2>
+        <p class="section-subtitle">Everything you need for live vocal processing</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F3A4;</div>
+                <h3>Pitch Shifter</h3>
+                <p>Transpose vocals in real-time up to &plusmn;12 semitones. Perfect for karaoke and vocal training.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F50A;</div>
+                <h3>Reverb & Delay</h3>
+                <p>Studio-quality reverb and delay effects with adjustable wet/dry mix and time parameters.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F39A;&#xFE0F;</div>
+                <h3>4-Band Equalizer</h3>
+                <p>Shape your sound with dedicated Low, Mid, High, and Presence controls.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F39B;&#xFE0F;</div>
+                <h3>Channel Mixer</h3>
+                <p>Volume, pan, mute, and solo controls with real-time VU metering.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F3B5;</div>
+                <h3>Pitch Detection</h3>
+                <p>Built-in tuner displays the detected pitch in real-time for accurate monitoring.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x26A1;</div>
+                <h3>Zero-Latency Bypass</h3>
+                <p>Instant bypass toggle passes audio through unprocessed when you need clean signal.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platforms -->
+    <section class="platforms">
+        <div class="platforms-inner">
+            <h2 class="section-title">Choose Your Platform</h2>
+            <p class="section-subtitle">Available as standalone app and VST3 plugin for all major DAWs</p>
+            <div class="platform-cards">
+                <div class="platform-card">
+                    <div class="os-icon">&#x1F427;</div>
+                    <h3>Linux</h3>
+                    <div class="version">v1.0.0 &mdash; x86_64</div>
+                    <ul class="specs">
+                        <li>Standalone App + VST3 Plugin</li>
+                        <li>PipeWire / PulseAudio / ALSA</li>
+                        <li>Carla, Ardour, Reaper, Bitwig</li>
+                        <li>Auto-install script included</li>
+                    </ul>
+                    <a href="../linux/install.sh" class="btn btn-primary">Download Linux</a>
+                    <a href="../linux/README.md" class="btn btn-secondary">Docs</a>
+                </div>
+                <div class="platform-card">
+                    <div class="os-icon">&#x1FA9F;</div>
+                    <h3>Windows</h3>
+                    <div class="version">v1.0.0 &mdash; x64</div>
+                    <ul class="specs">
+                        <li>Standalone App + VST3 Plugin</li>
+                        <li>WASAPI / ASIO support</li>
+                        <li>FL Studio, Ableton, Cubase</li>
+                        <li>One-click installer (.exe)</li>
+                    </ul>
+                    <a href="../windows/KaraokeDSP-Setup.exe" class="btn btn-primary">Download Windows</a>
+                    <a href="../windows/README.md" class="btn btn-secondary">Docs</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Preview -->
+    <section class="preview">
+        <h2 class="section-title">Interface Preview</h2>
+        <p class="section-subtitle">Dark metallic console design inspired by professional studio hardware</p>
+        <div class="preview-frame">
+            <div class="preview-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="preview-content">
+                <div class="preview-placeholder">
+                    &#x1F4F7; Screenshot placeholder<br>
+                    <small>Replace with actual app screenshot</small>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 500px;">
+                    Dark metallic UI with analog VU meters, rotary knobs, channel strips,
+                    equalizer section, and real-time level monitoring.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/roccoraco703-boop/Karaoke-DSP-vst3">GitHub</a>
+            <a href="../linux/README.md">Linux Docs</a>
+            <a href="../windows/README.md">Windows Docs</a>
+            <a href="../linux/INSTALL.txt">Install Guide</a>
+        </div>
+        <p>&copy; 2025 Rocco Audio. Open source on <a href="https://github.com/roccoraco703-boop/Karaoke-DSP-vst3">GitHub</a>.</p>
+    </footer>
+
+</body>
+</html>
