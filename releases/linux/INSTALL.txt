@@ -50,13 +50,19 @@ LAUNCH
   VST3 plugin:
     Load in any DAW (Ardour, Reaper, Bitwig, Carla, etc.)
 
+IMPORTANT NOTE
+----------------
+  The standalone app only captures the MICROPHONE (hardware input).
+  To process SYSTEM AUDIO (YouTube, browser, Bluetooth), use the
+  VST3 plugin inside Carla or route audio with helvum.
+
 SYSTEM AUDIO ROUTING (YouTube, Browser, Bluetooth)
 --------------------------------------------------
   Use Carla or helvum to route Firefox/YouTube/Bluetooth audio
   into the Karaoke DSP plugin.
 
-  Carla:   sudo dnf install carla
-  Helvum:  sudo dnf install helvum
+  Carla (recommended):   sudo dnf install carla
+  Helvum:                sudo dnf install helvum
 
 UNINSTALL
 ---------

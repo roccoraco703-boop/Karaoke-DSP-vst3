@@ -95,9 +95,15 @@ Apri qualsiasi DAW (Ardour, Reaper, Bitwig, Carla) e carica il plugin dalla cart
 
 ## Routing audio di sistema (YouTube, Browser, Bluetooth)
 
-Per catturare l'audio di sistema (es. YouTube) usa uno di questi metodi:
+> **IMPORTANTE:** L'app standalone cattura solo il **microfono** (input hardware). Per elaborare l'audio di sistema (YouTube, browser, Bluetooth) è necessario usare il **plugin VST3 in Carla** oppure instradare l'audio con **helvum** (vedi sotto).
+>
+> Il pulsante MONITOR nell'app serve a selezionare il dispositivo di input dal dropdown, non per catturare l'output del sistema.
 
-### Metodo 1 — Carla (consigliato)
+Per catturare l'audio di sistema usa uno di questi metodi:
+
+### Metodo 1 — Carla (consigliato per audio di sistema)
+
+Il plugin VST3 in Carla permette di instradare qualsiasi fonte audio (YouTube, browser, Bluetooth) attraverso gli effetti DSP.
 
 ```bash
 sudo dnf install carla    # Fedora
