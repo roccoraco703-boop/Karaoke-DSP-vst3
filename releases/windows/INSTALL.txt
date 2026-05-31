@@ -2,17 +2,26 @@
   KARAOKE DSP — WINDOWS INSTALLATION GUIDE
 ================================================================================
 
-QUICK INSTALL (Recommended)
----------------------------
-  Run the installer:  KaraokeDSP-Setup.exe
-  Follow the on-screen instructions.
+QUICK INSTALL (Recommended — Installer .exe)
+-----------------------------------------------
+  Run:  KaraokeDSP-Setup.exe
+  Follow the on-screen wizard.
 
-POWERSHELL INSTALL
-------------------
+  NOTE: This is a standalone installer with a graphical wizard.
+        It is NOT created by install.ps1 (see below).
+
+POWERSHELL INSTALL (install.ps1)
+---------------------------------
+  install.ps1 is a script that copies pre-compiled files from the
+  payload/ folder to the correct system locations.
+
   1. Open PowerShell as Administrator
   2. Navigate to this folder
   3. Run:
        powershell -ExecutionPolicy Bypass -File install.ps1
+
+  NOTE: install.ps1 does NOT build the project or create the .exe installer.
+        It only copies files that are already compiled.
 
 MANUAL INSTALL
 --------------
@@ -55,13 +64,23 @@ SYSTEM AUDIO ROUTING (YouTube, Browser)
     2. Route system audio through VoiceMeeter virtual channels
     3. Send virtual output to your DAW / Karaoke DSP
 
+BUILD THE INSTALLER .exe (Developer)
+-------------------------------------
+  To create KaraokeDSP-Setup.exe from scratch:
+    1. Install NSIS on Windows:  https://nsis.sourceforge.io/
+    2. Build the project in Release mode
+    3. Run:
+         makensis /DOUTFILE="KaraokeDSP-Setup.exe" /DBUILD_DIR="Build\win-msvc-release" installer.nsi
+    4. Or use:  .\package_nsis.ps1
+
+  NOTE: Building the .exe installer requires Windows + makensis.
+
 UNINSTALL
 ---------
-  Settings > Apps > Karaoke DSP > Uninstall
-
-  Or manually delete:
-    %LOCALAPPDATA%\Programs\KaraokeDSP
-    %LOCALAPPDATA%\VST3\Karaoke DSP.vst3
+  Installer .exe:    Settings > Apps > Karaoke DSP > Uninstall
+  Script / Manual:   Delete the following folders:
+                       %LOCALAPPDATA%\Programs\KaraokeDSP
+                       %LOCALAPPDATA%\VST3\Karaoke DSP.vst3
 
 ================================================================================
   GitHub: https://github.com/roccoraco703-boop/Karaoke-DSP-vst3

@@ -8,15 +8,20 @@ Applicazione standalone e plugin VST3 per elaborazione audio vocale in tempo rea
 
 | File | Descrizione |
 |------|-------------|
-| `KaraokeDSP-Setup.exe` | Installer automatico (consigliato) |
-| `install.ps1` | Script di installazione PowerShell |
+| `KaraokeDSP-Setup.exe` | Installer automatico con wizard (consigliato) |
+| `install.ps1` | Script PowerShell che copia i file già compilati |
+| `installer.nsi` | Script NSIS per compilare l'installer .exe (vedi "Compilare l'installer" sotto) |
 | `INSTALL.txt` | Istruzioni di installazione manuale |
 | `README.md` | Questo file |
 | `payload/` | Cartella con eseguibile e plugin VST3 |
 
 ---
 
-## Installazione rapida (Installer)
+## Installazione rapida (Installer .exe)
+
+`KaraokeDSP-Setup.exe` è un installer standalone con wizard grafico — doppio click e segui le istruzioni.
+
+> **Nota:** `KaraokeDSP-Setup.exe` **non** si crea con `install.ps1`. Sono due strumenti diversi.
 
 1. Esegui `KaraokeDSP-Setup.exe`
 2. Segui la procedura guidata
@@ -24,7 +29,9 @@ Applicazione standalone e plugin VST3 per elaborazione audio vocale in tempo rea
 
 ---
 
-## Installazione con PowerShell
+## Installazione con PowerShell (install.ps1)
+
+`install.ps1` copia i file già compilati (presenti nella cartella `payload/`) nella posizione corretta del sistema — è un'alternativa all'installer .exe.
 
 1. Apri **PowerShell** come Amministratore
 2. Vai nella cartella della release
@@ -32,6 +39,8 @@ Applicazione standalone e plugin VST3 per elaborazione audio vocale in tempo rea
    ```powershell
    powershell -ExecutionPolicy Bypass -File install.ps1
    ```
+
+**Nota:** `install.ps1` richiede che i file compilati siano presenti nella cartella `payload/`. Non compila il codice sorgente.
 
 ---
 
@@ -112,12 +121,33 @@ Alcune schede audio professionali supportano il loopback hardware:
 
 ---
 
+## Compilare l'installer .exe (da sviluppatore)
+
+Per creare `KaraokeDSP-Setup.exe` partendo da zero:
+
+1. **Su Windows**, installa **NSIS**: https://nsis.sourceforge.io/
+2. Compila il progetto in modalità Release (usa Visual Studio o CMake)
+3. Esegui:
+   ```powershell
+   cd /percorso/del/repository
+   & "C:\Program Files (x86)\NSIS\makensis.exe" /DOUTFILE="KaraokeDSP-Setup.exe" /DBUILD_DIR="Build\win-msvc-release" installer.nsi
+   ```
+
+Oppure usa lo script `package_nsis.ps1` (richiede PowerShell + NSIS):
+```powershell
+.\package_nsis.ps1
+```
+
+> **Attenzione:** La compilazione dell'installer .exe è possibile **solo su Windows** (richiede `makensis`).
+
+---
+
 ## Disinstallazione
 
-**Metodo 1 (Installer):**
+**Metodo 1 (Installer .exe):**
 - Vai in `Impostazioni > App > Karaoke DSP > Disinstalla`
 
-**Metodo 2 (Manuale):**
+**Metodo 2 (Script PowerShell / Manuale):**
 - Elimina la cartella `%LOCALAPPDATA%\Programs\KaraokeDSP`
 - Elimina `%LOCALAPPDATA%\VST3\Karaoke DSP.vst3`
 - Elimina i collegamenti Desktop/Start Menu
